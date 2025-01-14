@@ -52,7 +52,8 @@ def update_status():
 # Create main window
 root = tk.Tk()
 root.overrideredirect(True)  # No borders
-root.geometry(f"{root.winfo_screenwidth()}x6+0+0")  # Set to screen width and 6px height (3px per line)
+screen_height = root.winfo_screenheight()
+root.geometry(f"{root.winfo_screenwidth()}x6+0+{screen_height - 6}")  # Position at bottom of screen
 root.attributes("-topmost", True)  # Always on top
 
 # Create bars for battery and memory
