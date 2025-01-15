@@ -7,14 +7,16 @@ def update_cpu_status():
 
     # Calculate height for the CPU usage bar
     used_height = int(screen_height * (cpu_percentage / 100))
-    center_position = (screen_height - used_height) // 2  # Center the bar vertically
+    unused_height = screen_height - used_height
+    center_position = (screen_height - used_height) // 2  # Center the active bar vertically
 
-    # Update the size and position of the "used" portion
-    if used_height > 0:
-        used_bar.place(x=0, y=center_position, width=4, height=used_height)
-        used_bar.config(bg="#FFA500")  # Orange color for CPU usage
-    else:
-        used_bar.place_forget()  # Hide the bar if usage is zero
+    # Update the "used" portion (red for active)
+    used_bar.place(x=0, y=center_position, width=4, height=used_height)
+    used_bar.config(bg="#FF0000")  # Red for CPU usage
+
+    # Update the "unused" portion (black for inactive)
+    unused_bar.place(x=0, y=0, width=4, height=screen_height)
+    unused_bar.lower()  # Ensure unused bar is behind the active bar
 
     # Refresh every 1 second
     root.after(1000, update_cpu_status)
@@ -29,8 +31,9 @@ screen_height = root.winfo_screenheight()
 root.geometry(f"4x{screen_height}+0+0")
 root.attributes("-topmost", True)  # Always on top
 
-# Create the bar for used CPU
-used_bar = tk.Label(root)
+# Create the bars for CPU usage
+unused_bar = tk.Label(root, bg="#000000")  # Black for inactive CPU area
+used_bar = tk.Label(root)  # Red for active CPU usage
 
 # Update initial status
 update_cpu_status()
