@@ -10,13 +10,16 @@ def run_battery():
         charge_percentage = battery.percent if battery else 0
         is_charging = battery.power_plugged if battery else False
 
-        # Determine bar color based on battery percentage
-        if charge_percentage < 15:
-            bar_color = "#FF0000"  # Red
-        elif charge_percentage < 30:
-            bar_color = "#FF00FF"  # Pink
+        if not is_charging:
+            bar_color = '#00FFFF'
         else:
-            bar_color = "#00FF00" if not is_charging else "#00FFFF"  # Green or Cyan
+            # Determine bar color based on battery percentage
+            if charge_percentage < 15:
+                bar_color = "#FF0000"  # Red
+            elif charge_percentage < 30:
+                bar_color = "#FF00FF"  # Pink
+            else:
+                bar_color = "#00FFFF"  # Green or Cyan
 
         # Calculate bar dimensions
         screen_width = root.winfo_screenwidth()
@@ -87,7 +90,7 @@ def run_memory():
     def update_memory_status():
         memory = psutil.virtual_memory()
         memory_used_percentage = memory.percent
-        
+
         used_height = int(screen_height * (memory_used_percentage / 100))
         center_position = (screen_height - used_height) // 2  # Center the bar vertically
 
@@ -107,7 +110,7 @@ def run_memory():
     root.overrideredirect(True)  # No borders
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
-    
+
     # Place at right side of screen
     root.geometry(f"4x{screen_height}+{screen_width-4}+0")
     root.attributes("-topmost", True)  # Always on top
