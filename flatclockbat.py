@@ -60,7 +60,7 @@ def run_combined():
         gpu_usage = int(gpu_temp / 100 * screen_width)
 
         gpu_canvas.delete("all")
-        gpu_canvas.create_rectangle(0, 0, gpu_usage, bar_width, fill="#800080", outline='')
+        gpu_canvas.create_rectangle((screen_width - gpu_usage) // 2, 0, (screen_width + gpu_usage) // 2, bar_width, fill="#800080", outline='') # Centered
 
         root.after(5000, update_gpu)
 
@@ -102,7 +102,7 @@ def run_combined():
             bar_color = "#00FFFF"
 
         battery_width = int(screen_width * (charge_percentage / 100))
-        battery_canvas.delete("all") # move delete back here
+        battery_canvas.delete("all")
         battery_canvas.create_rectangle((screen_width - battery_width) // 2, 0, (screen_width + battery_width) // 2, 2, fill=bar_color, outline='')
         root.after(20000, update_battery)
 
@@ -125,10 +125,10 @@ def run_combined():
         draw_hand(hour_angle, "#00FF00", hand_length, hand_width)
 
         # Draw minute hand
-        draw_hand(minute_angle, "#7733FF", hand_length, hand_width)
+        draw_hand(minute_angle, "#FFD700", hand_length, hand_width)
 
         # Draw second hand
-        draw_hand(second_angle, "#FFD700", second_hand_length, second_hand_width)
+       # draw_hand(second_angle, "#FFD700", second_hand_length, second_hand_width)
 
         root.after(1000, draw_clock)
 
