@@ -7,14 +7,47 @@ import math
 import yaml
 import os
 
-def load_config():
-    config_path = os.path.expanduser("~/.config/flatbat/config.yaml")
-    with open(config_path, 'r') as f:
-        return yaml.safe_load(f)
+CONFIG_PATH = os.path.expanduser("~/.config/flatbat/config.yaml")
 
-config = load_config()
+DEFAULT_CONFIG = {
+    'general': {
+        'batt': True,
+        'clock': False,
+        'cpu': True,
+        'gpu': True,
+        'mem': True,
+    },
+    'batt': {
+        'unplugged': '#004442',
+        'plugged': '#11ff11',
+    },
+    'clock': {
+        'hour': '#ff0000',
+        'min': '#0000ff',
+    },
+    'cpu': {
+        'colour': '#ff0000',
+    },
+    'gpu': {
+        'colour': '#ffff00',
+    },
+    'mem': {
+        'colour': '#0000ff',
+    },
+}
+
+def load_config():
+    if not os.path.exists(CONFIG_PATH):
+        os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
+        with open(CONFIG_PATH, "w") as f:
+            yaml.dump(DEFAULT_CONFIG, f)
+        return DEFAULT_CONFIG
+    else:
+        with open(CONFIG_PATH) as f:
+            return yaml.safe_load(f)
 
 def run_combined():
+    config = load_config() 
     root = tk.Tk()
     root.withdraw()
     screen_width = root.winfo_screenwidth()
@@ -27,7 +60,7 @@ def run_combined():
 # second_hand_width = 3
 
  # Windows setup
-    if config['general'].get('gpu', True):
+    if config['general'].get('gpu', True) or config['general'].get('clock', False):
         gpu_window = tk.Toplevel(root)
         gpu_window.overrideredirect(True)
         gpu_window.geometry(f"{screen_width}x{bar_width}+0+0")
@@ -36,7 +69,7 @@ def run_combined():
         gpu_canvas.pack()
         gpu_color = config.get('gpu', {}).get('colour', '#800080')
 
-    if config['general'].get('cpu', True):
+    if config['general'].get('cpu', True) or config['general'].get('clock', False):
         cpu_window = tk.Toplevel(root)
         cpu_window.overrideredirect(True)
         cpu_window.geometry(f"{bar_width}x{screen_height}+0+0")
@@ -45,7 +78,7 @@ def run_combined():
         cpu_canvas.pack()
         cpu_color = config.get('cpu', {}).get('colour', '#FF0000')
 
-    if config['general'].get('mem', True):
+    if config['general'].get('mem', True) or config['general'].get('clock', False):
         memory_window = tk.Toplevel(root)
         memory_window.overrideredirect(True)
         memory_window.geometry(f"{bar_width}x{screen_height}+{screen_width - bar_width}+0")
@@ -54,7 +87,7 @@ def run_combined():
         memory_canvas.pack()
         mem_color = config.get('mem', {}).get('colour', '#0000FF')
 
-    if config['general'].get('batt', True):
+    if config['general'].get('batt', True) or config['general'].get('clock', False):
         battery_window = tk.Toplevel(root)
         battery_window.overrideredirect(True)
         battery_window.geometry(f"{screen_width}x2+0+{screen_height - 2}")
@@ -129,24 +162,24 @@ def run_combined():
 
     def draw_hour_marker(angle, color):
         x, y, edge = calculate_position(angle, screen_width, screen_height)
-        if edge == "top" and config['general'].get('gpu', True):
+        if edge == "top" and (config['general'].get('gpu', True) or config['general'].get('clock', False)):
             gpu_canvas.create_rectangle(x, 0, x + bar_width, bar_width, fill=color, outline='')
-        elif edge == "bottom" and config['general'].get('batt', True):
+        elif edge == "bottom" and (config['general'].get('batt', True) or config['general'].get('clock', False)):
             battery_canvas.create_rectangle(x, 0, x + bar_width, bar_width, fill=color, outline='')
-        elif edge == "left" and config['general'].get('cpu', True):
+        elif edge == "left" and (config['general'].get('cpu', True) or config['general'].get('clock', False)):
             cpu_canvas.create_rectangle(0, y, bar_width, y + bar_width, fill=color, outline='')
-        elif edge == "right" and config['general'].get('mem', True):
+        elif edge == "right" and (config['general'].get('mem', True) or config['general'].get('clock', False)):
             memory_canvas.create_rectangle(0, y, bar_width, y + bar_width, fill=color, outline='')
 
     def draw_hand(angle, color, length, width):
         x, y, edge = calculate_position(angle, screen_width, screen_height)
-        if edge == "top" and config['general'].get('gpu', True):
+        if edge == "top" and (config['general'].get('gpu', True) or config['general'].get('clock', False)):
             gpu_canvas.create_rectangle(max(0, x - length // 2), 0, min(screen_width, x + length // 2), width, fill=color, outline='')
-        elif edge == "bottom" and config['general'].get('batt', True):
+        elif edge == "bottom" and (config['general'].get('batt', True) or config['general'].get('clock', False)):
             battery_canvas.create_rectangle(max(0, x - length // 2), 0, min(screen_width, x + length // 2), width, fill=color, outline='')
-        elif edge == "left" and config['general'].get('cpu', True):
+        elif edge == "left" and (config['general'].get('cpu', True) or config['general'].get('clock', False)):
             cpu_canvas.create_rectangle(0, max(0, y - length // 2), width, min(screen_height, y + length // 2), fill=color, outline='')
-        elif edge == "right" and config['general'].get('mem', True):
+        elif edge == "right" and (config['general'].get('mem', True) or config['general'].get('clock', False)):
             memory_canvas.create_rectangle(0, max(0, y - length // 2), width, min(screen_height, y + length // 2), fill=color, outline='')
 
     def calculate_position(angle, width, height):
