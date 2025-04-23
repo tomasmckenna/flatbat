@@ -1,0 +1,11 @@
+LICENSE
+README.md
+setup.py
+flatbat/__init__.py
+flatbat/main.py
+flatbat.egg-info/PKG-INFO
+flatbat.egg-info/SOURCES.txt
+flatbat.egg-info/dependency_links.txt
+flatbat.egg-info/entry_points.txt
+flatbat.egg-info/requires.txt
+flatbat.egg-info/top_level.txt

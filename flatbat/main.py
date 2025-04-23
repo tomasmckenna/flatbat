@@ -4,6 +4,15 @@ import psutil
 import threading
 import datetime
 import math
+import yaml
+import os
+
+def load_config():
+    config_path = os.path.expanduser("~/.config/flatbat/config.yaml")
+    with open(config_path, 'r') as f:
+        return yaml.safe_load(f)
+
+config = load_config()
 
 def run_combined():
     root = tk.Tk()
@@ -11,45 +20,50 @@ def run_combined():
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
 
-    bar_width = 4
+    bar_width = 3
     hand_length = 44
-    hand_width = 4
-    second_hand_length = 4
-    second_hand_width = 4
+    hand_width = 3
+# second_hand_length = 4
+# second_hand_width = 3
 
-    # GPU window
-    gpu_window = tk.Toplevel(root)
-    gpu_window.overrideredirect(True)
-    gpu_window.geometry(f"{screen_width}x{bar_width}+0+0")
-    gpu_window.attributes("-topmost", True)
-    gpu_canvas = tk.Canvas(gpu_window, width=screen_width, height=bar_width, bg="black", highlightthickness=0)
-    gpu_canvas.pack()
+ # Windows setup
+    if config['general'].get('gpu', True):
+        gpu_window = tk.Toplevel(root)
+        gpu_window.overrideredirect(True)
+        gpu_window.geometry(f"{screen_width}x{bar_width}+0+0")
+        gpu_window.attributes("-topmost", True)
+        gpu_canvas = tk.Canvas(gpu_window, width=screen_width, height=bar_width, bg="black", highlightthickness=0)
+        gpu_canvas.pack()
+        gpu_color = config.get('gpu', {}).get('colour', '#800080')
 
-    # CPU and Memory windows
-    cpu_window = tk.Toplevel(root)
-    cpu_window.overrideredirect(True)
-    cpu_window.geometry(f"{bar_width}x{screen_height}+0+0")
-    cpu_window.attributes("-topmost", True)
-    cpu_canvas = tk.Canvas(cpu_window, width=bar_width, height=screen_height, bg="black", highlightthickness=0)
-    cpu_canvas.pack()
+    if config['general'].get('cpu', True):
+        cpu_window = tk.Toplevel(root)
+        cpu_window.overrideredirect(True)
+        cpu_window.geometry(f"{bar_width}x{screen_height}+0+0")
+        cpu_window.attributes("-topmost", True)
+        cpu_canvas = tk.Canvas(cpu_window, width=bar_width, height=screen_height, bg="black", highlightthickness=0)
+        cpu_canvas.pack()
+        cpu_color = config.get('cpu', {}).get('colour', '#FF0000')
 
-    memory_window = tk.Toplevel(root)
-    memory_window.overrideredirect(True)
-    memory_window.geometry(f"{bar_width}x{screen_height}+{screen_width - bar_width}+0")
-    memory_window.attributes("-topmost", True)
-    memory_canvas = tk.Canvas(memory_window, width=bar_width, height=screen_height, bg="black", highlightthickness=0)
-    memory_canvas.pack()
+    if config['general'].get('mem', True):
+        memory_window = tk.Toplevel(root)
+        memory_window.overrideredirect(True)
+        memory_window.geometry(f"{bar_width}x{screen_height}+{screen_width - bar_width}+0")
+        memory_window.attributes("-topmost", True)
+        memory_canvas = tk.Canvas(memory_window, width=bar_width, height=screen_height, bg="black", highlightthickness=0)
+        memory_canvas.pack()
+        mem_color = config.get('mem', {}).get('colour', '#0000FF')
 
-    # Battery window
-    battery_window = tk.Toplevel(root)
-    battery_window.overrideredirect(True)
-    battery_window.geometry(f"{screen_width}x2+0+{screen_height - 2}")
-    battery_window.attributes("-topmost", True)
-    battery_canvas = tk.Canvas(battery_window, width=screen_width, height=2, bg="black", highlightthickness=0)
-    battery_canvas.pack()
+    if config['general'].get('batt', True):
+        battery_window = tk.Toplevel(root)
+        battery_window.overrideredirect(True)
+        battery_window.geometry(f"{screen_width}x2+0+{screen_height - 2}")
+        battery_window.attributes("-topmost", True)
+        battery_canvas = tk.Canvas(battery_window, width=screen_width, height=2, bg="black", highlightthickness=0)
+        battery_canvas.pack()
 
-    # GPU Update
     def update_gpu():
+        if not config['general'].get('gpu', True): return
         gpu_temp = 0
         temperatures = psutil.sensors_temperatures()
         if "amdgpu" in temperatures:
@@ -58,100 +72,81 @@ def run_combined():
             gpu_temp = temperatures["nvme"][0].current
 
         gpu_usage = int(gpu_temp / 100 * screen_width)
-
         gpu_canvas.delete("all")
-        gpu_canvas.create_rectangle((screen_width - gpu_usage) // 2, 0, (screen_width + gpu_usage) // 2, bar_width, fill="#800080", outline='') # Centered
-
+        gpu_canvas.create_rectangle((screen_width - gpu_usage) // 2, 0, (screen_width + gpu_usage) // 2, bar_width, fill=gpu_color, outline='')
         root.after(5000, update_gpu)
 
-    # CPU and Memory Update
     def update_cpu_memory():
-        cpu_percentage = psutil.cpu_percent(interval=0.5)
-        memory = psutil.virtual_memory()
-        memory_used_percentage = memory.percent
+        if config['general'].get('cpu', True):
+            cpu_percentage = psutil.cpu_percent(interval=0.5)
+            cpu_height = int(screen_height * (cpu_percentage / 100))
+            cpu_canvas.delete("all")
+            if cpu_height > 0:
+                cpu_canvas.create_rectangle(0, (screen_height - cpu_height) // 2, bar_width, (screen_height + cpu_height) // 2, fill=cpu_color, outline='')
 
-        cpu_height = int(screen_height * (cpu_percentage / 100))
-        memory_height = int(screen_height * (memory_used_percentage / 100))
+        if config['general'].get('mem', True):
+            memory = psutil.virtual_memory()
+            memory_height = int(screen_height * (memory.percent / 100))
+            memory_canvas.delete("all")
+            if memory_height > 0:
+                memory_canvas.create_rectangle(0, (screen_height - memory_height) // 2, bar_width, (screen_height + memory_height) // 2, fill=mem_color, outline='')
 
-        cpu_canvas.delete("all")
-        if cpu_height > 0:
-            cpu_canvas.create_rectangle(0, (screen_height - cpu_height) // 2, bar_width, (screen_height + cpu_height) // 2, fill="#FF0000", outline='')
-
-        memory_canvas.delete("all")
-        if memory_height > 0:
-            memory_canvas.create_rectangle(0, (screen_height - memory_height) // 2, bar_width, (screen_height + memory_height) // 2, fill="#0000FF", outline='')
-
-        # Draw clock on CPU and Memory
-        draw_clock()
+        if config['general'].get('clock', False):
+            draw_clock()
 
         root.after(1000, update_cpu_memory)
 
-    # Battery Update
     def update_battery():
+        if not config['general'].get('batt', True): return
         battery = psutil.sensors_battery()
         charge_percentage = battery.percent if battery else 0
         is_charging = battery.power_plugged if battery else False
 
-        if not is_charging:
-            bar_color = '#00FFFF'
-        elif charge_percentage < 15:
-            bar_color = "#FF0000"
-        elif charge_percentage < 30:
-            bar_color = "#FF00FF"
+        color_config = config.get('batt', {})
+        if is_charging:
+            bar_color = color_config.get('plugged', '#00FFFF')
         else:
-            bar_color = "#00FFFF"
+            bar_color = color_config.get('unplugged', '#00FFFF')
 
         battery_width = int(screen_width * (charge_percentage / 100))
         battery_canvas.delete("all")
         battery_canvas.create_rectangle((screen_width - battery_width) // 2, 0, (screen_width + battery_width) // 2, 2, fill=bar_color, outline='')
         root.after(20000, update_battery)
 
-    # Clock Draw
     def draw_clock():
         now = datetime.datetime.now()
         hour = now.hour % 12
         minute = now.minute
-        second = now.second
 
-        hour_angle = (hour + minute / 60) * 30
+        hour_angle = (hour * 30 + minute * 0.5)  # 12:00 = 0°
         minute_angle = minute * 6
-        second_angle = second * 6
 
-        # Draw hour markers (12, 3, 6, 9)
         for angle in range(0, 360, 30):
             draw_hour_marker(angle, "gray")
 
-        # Draw hour hand
-        draw_hand(hour_angle, "#00FF00", hand_length, hand_width)
-
-        # Draw minute hand
-        draw_hand(minute_angle, "#FFD700", hand_length, hand_width)
-
-        # Draw second hand
-        # draw_hand(second_angle, "#FFD700", second_hand_length, second_hand_width)
-
-        root.after(1000, draw_clock)
+        draw_hand(hour_angle, config.get('clock', {}).get('hour', '#00FF00'), hand_length, hand_width)
+        draw_hand(minute_angle, config.get('clock', {}).get('min', '#FFD700'), hand_length, hand_width)
 
     def draw_hour_marker(angle, color):
         x, y, edge = calculate_position(angle, screen_width, screen_height)
-        if edge == "top":
+        if edge == "top" and config['general'].get('gpu', True):
             gpu_canvas.create_rectangle(x, 0, x + bar_width, bar_width, fill=color, outline='')
-        elif edge == "bottom":
+        elif edge == "bottom" and config['general'].get('batt', True):
             battery_canvas.create_rectangle(x, 0, x + bar_width, bar_width, fill=color, outline='')
-        elif edge == "left":
+        elif edge == "left" and config['general'].get('cpu', True):
             cpu_canvas.create_rectangle(0, y, bar_width, y + bar_width, fill=color, outline='')
-        elif edge == "right":
+        elif edge == "right" and config['general'].get('mem', True):
             memory_canvas.create_rectangle(0, y, bar_width, y + bar_width, fill=color, outline='')
 
     def draw_hand(angle, color, length, width):
         x, y, edge = calculate_position(angle, screen_width, screen_height)
-        if edge == "top":
+        if edge == "top" and config['general'].get('gpu', True):
             gpu_canvas.create_rectangle(max(0, x - length // 2), 0, min(screen_width, x + length // 2), width, fill=color, outline='')
-        elif edge == "bottom":
+        elif edge == "bottom" and config['general'].get('batt', True):
             battery_canvas.create_rectangle(max(0, x - length // 2), 0, min(screen_width, x + length // 2), width, fill=color, outline='')
-        elif edge == "left":
+        elif edge == "left" and config['general'].get('cpu', True):
             cpu_canvas.create_rectangle(0, max(0, y - length // 2), width, min(screen_height, y + length // 2), fill=color, outline='')
-        elif edge == "right":
+        elif edge == "right" and config['general'].get('mem', True):
             memory_canvas.create_rectangle(0, max(0, y - length // 2), width, min(screen_height, y + length // 2), fill=color, outline='')
 
     def calculate_position(angle, width, height):
@@ -169,9 +164,13 @@ def run_combined():
             x = int((angle if angle < 45 else 360 - angle) / 90 * width)
             return x, 0, "top"
 
-    threading.Thread(target=update_gpu).start()
-    threading.Thread(target=update_cpu_memory).start()
-    threading.Thread(target=update_battery).start()
+    if config['general'].get('gpu', True):
+        threading.Thread(target=update_gpu).start()
+    if config['general'].get('cpu', True) or config['general'].get('mem', True) or config['general'].get('clock', False):
+        threading.Thread(target=update_cpu_memory).start()
+    if config['general'].get('batt', True):
+        threading.Thread(target=update_battery).start()
+
     root.mainloop()
 
 if __name__ == "__main__":
