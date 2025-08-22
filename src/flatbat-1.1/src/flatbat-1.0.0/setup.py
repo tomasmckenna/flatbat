@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="flatbat",
-    version="1.6.0",
+    version="1.0.0",
     author="tomasmckenna",
     author_email="tomas@mckenna.im",  # Replace with your email
     description="Minimalist tkinter system monitor overlay (CPU, RAM, GPU, battery, and clock)",

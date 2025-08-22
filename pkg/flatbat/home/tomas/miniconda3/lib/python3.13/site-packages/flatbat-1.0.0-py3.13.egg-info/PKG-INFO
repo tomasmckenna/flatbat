@@ -1,0 +1,62 @@
+Metadata-Version: 2.4
+Name: flatbat
+Version: 1.0.0
+Summary: Minimalist tkinter system monitor overlay (CPU, RAM, GPU, battery, and clock)
+Home-page: https://github.com/tomasmckenna/flatbat
+Author: tomasmckenna
+Author-email: tomas@mckenna.im
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: POSIX :: Linux
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: psutil
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: license-file
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# flatbat
+Inspired by https://github.com/CODeRUS/harbour-batteryoverlay
+
+A minimalist tkinter-based system monitor that shows CPU, RAM, GPU, battery, and a clock as thin border overlays.
+
+## Install
+
+### From AUR: 
+```bash
+yay -S flatbat
+
+Flatbat uses a YAML config file located at `~/.config/flatbat/config.yaml`.
+
+general:
+  gpu: true
+  cpu: true
+  mem: true
+  batt: true
+  clock: true
+
+gpu:
+  colour: "#800080"
+
+cpu:
+  colour: "#FF0000"
+
+mem:
+  colour: "#0000FF"
+
+batt:
+  plugged: "#00FF00"
+  unplugged: "#009944"
+
+clock:
+  hour: "#00FF00"
+  min: "#FFD700"
+
