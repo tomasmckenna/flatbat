@@ -1,0 +1,44 @@
+name: Push PKGBUILD to AUR
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "PKGBUILD"
+      - ".SRCINFO"
+
+jobs:
+  push-to-aur:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Setup SSH for AUR
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+
+      - name: Clone AUR repository
+        run: |
+          git clone ssh://aur@aur.archlinux.org/flatbat.git aur-repo
+
+      - name: Copy PKGBUILD + .SRCINFO into AUR repo
+        run: |
+          cp PKGBUILD .SRCINFO aur-repo/
+
+      - name: Commit and push to AUR
+        working-directory: aur-repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add PKGBUILD .SRCINFO
+          if git diff --cached --quiet; then
+            echo "No changes to push."
+          else
+            git commit -m "flatbat: automated update from GitHub"
+            git push
+          fi
