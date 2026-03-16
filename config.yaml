@@ -1,0 +1,30 @@
+general:
+  overlay: True
+  gpu: False
+  cpu: False
+  mem: False
+  batt: True
+  clock: True
+  gaps: 5
+gpu:
+  colour: "#800080"
+  thickness: 5
+cpu:
+  colour: "#FF0000"
+  thickness: 3
+mem:
+  colour: "#3333FF"
+  thickness: 6
+batt:
+  critical_battery_level: 20
+  critical_battery_color: "#FF0000"
+  plugged: "#00FFF0"
+  unplugged: "#00FF00"
+  empty: "#580000"
+  thickness: 2
+clock:
+  thickness: 4
+  hour: "#228844"
+  min: "#994A99"
+  segments: "#0000FF"
+
