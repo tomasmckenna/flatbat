@@ -1,9 +1,7 @@
 # Flatbat
 
 *A minimalist, border-based system monitor for Linux*
-
-Flatbat Screenshot  
-*(Example: CPU, RAM, GPU, battery, and clock overlays in action)*
+<img width="1920" height="1080" alt="bauhaus" src="https://github.com/user-attachments/assets/10177db3-c092-4209-b975-92b8026ba221" />
 
 ---
 
@@ -160,7 +158,7 @@ Flatbat renders system stats as thin, colored borders around your screen:
 | **CPU**     | Red (`#FF0000`)    | Shows CPU usage as a border.                                              |
 | **RAM**     | Blue (`#3333FF`)   | Displays memory usage.                                                    |
 | **GPU**     | Purple (`#800080`) | GPU usage (if enabled).                                                   |
-| **Battery** | Green/Red          | Battery level; turns red when critical. The "fuse" visualizes power draw. |
+| **Battery** | Green/Red          | Battery level; turns red when critical, the fuse size reflects power draw.|
 | **Clock**   | Green/Gold         | Hour and minute markers, with 12h or 24h modes.                           |
 
 
