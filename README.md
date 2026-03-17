@@ -145,6 +145,7 @@ flatbat --preset solarized
 - **Thickness**: Adjust the border thickness (e.g., `3` for a 3px border).
 - **Refresh Rate**: Set how often each module updates (in seconds).
 - **Fuse**: Visualize power draw with a glowing tip (battery only).
+- **Overlay**: Toggles if flatbat overlays fullscreen applications.
 
 ---
 
