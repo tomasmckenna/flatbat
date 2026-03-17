@@ -148,8 +148,6 @@ flatbat --preset solarized
 - **Refresh Rate**: Set how often each module updates (in seconds).
 - **Fuse**: Visualize power draw with a glowing tip (battery only).
 
-  <img width="1920" height="1080" alt="high_fuse" src="https://github.com/user-attachments/assets/3e6973f8-d603-4257-83cc-a27e50ff6cbc" />
-
 ---
 
 ## **Interface Overview**
@@ -170,21 +168,18 @@ Flatbat renders system stats as thin, colored borders around your screen:
 
 ## **Screenshots**
 
-1. **CPU and RAM Overlay**
 
-
-
-3. **Battery with Fuse**
+1. **Battery with Fuse**
 
 <img width="1920" height="1080" alt="high_fuse" src="https://github.com/user-attachments/assets/02ccfc37-05ca-4c27-b2e8-236e8f6eb50f" />
 
 
-4. **24h Clock Mode**
+2. **24h Clock Mode**
 
 <img width="1920" height="1075" alt="24 hour clock" src="https://github.com/user-attachments/assets/505dae5c-00c6-4511-800e-0f7c3ea447ce" />
 
 
-5. **Battery, 12 hour clock, CPU and RAM Overlay**
+3. **Battery, 12 hour clock, CPU and RAM Overlay**
 
 <img width="1920" height="1080" alt="Battery 12hour clock RAM and CPU" src="https://github.com/user-attachments/assets/bb888c07-b649-411f-a36b-2186a780a15f" />
 
