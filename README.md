@@ -176,7 +176,7 @@ Flatbat renders system stats as thin, colored borders around your screen:
 
 24 Segments, the leading segment is the current hour and is sequentially filled out in 5 minute blocks. 
 
-<img width="1920" height="1075" alt="24 hour clock" src="https://github.com/user-attachments/assets/505dae5c-00c6-4511-800e-0f7c3ea447ce" />
+<img width="1920" height="1080" alt="24 hour" src="https://github.com/user-attachments/assets/2056cb42-ebb8-4618-b938-0d17386cc5bc" />
 
 
 3. **Battery, 12 hour clock, CPU and RAM Overlay**
